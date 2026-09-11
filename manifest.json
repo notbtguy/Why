@@ -1,0 +1,17 @@
+{
+  "name": "The Why App",
+  "short_name": "The Why App",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f5ef",
+  "theme_color": "#14151a",
+  "description": "A private journal for questions, explanations, mental models and curiosity.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
