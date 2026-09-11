@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#14151a" />
+  <meta name="description" content="The Why App — a private journal for questions, explanations, mental models and curiosity." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="The Why App" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,450;0,9..144,550;0,9..144,650;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>The Why App</title>
+  <style>
+    :root {
+      --bg:#f7f5ef; --surface:#ffffff; --surface-2:#f4f1e8; --surface-hover:#eeeadd;
+      --text:#17160f; --text-soft:#3c3a30; --muted:#75725f; --muted-soft:#9d9986;
+      --line:#e7e2d2; --line-strong:#d8d1b8;
+      --ink:#14151a; --ink-2:#22242b;
+      --gold:#a3812f; --gold-soft:#c9a659; --gold-tint:rgba(163,129,47,.12); --gold-tint-strong:rgba(163,129,47,.26);
+      --danger:#b3261e; --success:#1e7a4c;
+      --radius:14px; --radius-lg:18px; --radius-xl:22px; --radius-sm:10px;
+      --shadow-xs:0 1px 2px rgba(23,22,15,.05);
+      --shadow-sm:0 6px 18px -6px rgba(23,22,15,.10);
+      --shadow-md:0 16px 38px -12px rgba(23,22,15,.20);
+      --shadow-lg:0 32px 70px -22px rgba(23,22,15,.32);
+      --ring:0 0 0 4px var(--gold-tint);
+      --serif:'Fraunces',ui-serif,Georgia,serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;color:var(--text);font-family:'Inter',ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;
+      background:
+        radial-gradient(1100px 520px at 12% -12%, rgba(163,129,47,.09), transparent 60%),
+        radial-gradient(900px 480px at 104% 0%, rgba(20,21,26,.05), transparent 55%),
+        var(--bg);
+      background-attachment:fixed;
+    }
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    a{color:inherit}
+    button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:none;box-shadow:var(--ring)}
+    svg.ic{width:16px;height:16px;flex:none}
+    .app{min-height:100vh}
+
+    .topbar{height:68px;background:rgba(247,245,239,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:30;box-shadow:0 12px 26px -24px rgba(20,20,15,.5)}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+    .logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(155deg,#23252c,#0d0e12);color:var(--gold-soft);display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-weight:600;font-size:20px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),var(--shadow-xs)}
+    .brand div{line-height:1.15}
+    .brand small{display:block;color:var(--gold);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+    .top-actions{display:flex;align-items:center;gap:9px}
+    .icon-btn,.ghost-btn,.primary-btn{border:1px solid var(--line);background:var(--surface);color:var(--text-soft);border-radius:var(--radius-sm);height:38px;padding:0 14px;display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;transition:.18s ease}
+    .icon-btn:hover,.ghost-btn:hover{border-color:var(--line-strong);background:var(--surface-hover);transform:translateY(-1px);box-shadow:var(--shadow-xs)}
+    .icon-btn{width:38px;padding:0;justify-content:center;color:var(--text-soft)}
+    .primary-btn{background:linear-gradient(155deg,var(--ink-2),var(--ink));color:#fff;border-color:var(--ink);box-shadow:var(--shadow-sm)}
+    .primary-btn:hover{transform:translateY(-1px);box-shadow:0 16px 32px -12px rgba(20,20,15,.45)}
+    .primary-btn:active,.ghost-btn:active,.icon-btn:active{transform:translateY(0)}
+    .install-btn{font-size:13px}
+    .avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(155deg,var(--ink-2),var(--ink));color:var(--gold-soft);display:grid;place-items:center;font-size:14px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 0 0 3px var(--gold-tint)}
+
+    .layout{max-width:1140px;margin:0 auto;padding:46px 30px 130px}
+    .hero{display:flex;justify-content:space-between;gap:34px;align-items:flex-start;margin-bottom:30px}
+    .eyebrow{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+    .eyebrow::before{content:"";width:18px;height:1.5px;background:linear-gradient(90deg,var(--gold),transparent)}
+    h1{font-family:var(--serif);font-weight:550;font-size:42px;line-height:1.08;letter-spacing:-1px;margin:0 0 12px;color:var(--text)}
+    h1 em{font-style:italic;font-weight:500;background:linear-gradient(120deg,var(--gold-soft),#7d5c20);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero p{max-width:640px;color:var(--muted);font-size:15px;line-height:1.7;margin:0}
+    .count-box{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-xs);border-radius:var(--radius);padding:14px 22px;min-width:88px;text-align:center}
+    .count-box strong{display:block;font-family:var(--serif);font-size:26px;font-weight:650;color:var(--text)}
+    .count-box span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-top:3px}
+
+    .sync-card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-sm);border-radius:var(--radius-lg);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .sync-card::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:linear-gradient(90deg,var(--gold),transparent 65%)}
+    .sync-left{display:flex;align-items:center;gap:13px;min-width:0}
+    .cloud{width:42px;height:42px;background:linear-gradient(155deg,#f9f0da,#f0e0b4);color:var(--gold);border-radius:var(--radius-sm);display:grid;place-items:center}
+    .sync-copy{min-width:0}.sync-copy strong{font-size:13px;display:flex;align-items:center}.sync-copy p{font-size:11.5px;color:var(--muted);margin:3px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--success);margin-right:8px;box-shadow:0 0 0 0 rgba(30,122,76,.45);animation:pulse 2.4s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(30,122,76,.4)}70%{box-shadow:0 0 0 7px rgba(30,122,76,0)}100%{box-shadow:0 0 0 0 rgba(30,122,76,0)}}
+    .sync-btn{height:36px;padding:0 14px;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-sm);font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:7px;color:var(--text-soft);transition:.18s}
+    .sync-btn:hover{border-color:var(--line-strong);background:var(--surface-hover);color:var(--text)}
+    .sync-btn:hover svg{transform:rotate(140deg)}
+    .sync-btn svg{transition:.35s ease}
+
+    .search-row{display:flex;gap:10px;margin-bottom:12px}
+    .search{position:relative;flex:1}
+    .search input{width:100%;height:48px;border:1.5px solid var(--line);background:var(--surface);border-radius:var(--radius);padding:0 16px 0 44px;outline:none;font-size:14px;transition:.18s}
+    .search input:focus{border-color:var(--gold-soft);box-shadow:var(--ring)}
+    .search input::placeholder{color:var(--muted-soft)}
+    .search span{position:absolute;left:15px;top:0;bottom:0;display:flex;align-items:center;color:var(--muted-soft)}
+    .filters{display:flex;gap:8px;overflow:auto;padding-bottom:14px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}
+    .filter{white-space:nowrap;border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:8px 14px;font-size:11.5px;font-weight:650;color:var(--text-soft);transition:.16s}
+    .filter:hover{border-color:var(--line-strong);background:var(--surface-hover)}
+    .filter.active{background:linear-gradient(155deg,var(--ink-2),var(--ink));color:#fff;border-color:var(--ink);box-shadow:var(--shadow-xs)}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px}.section-head h2{font-family:var(--serif);font-weight:650;font-size:18px;letter-spacing:-.2px;margin:0}.section-head span{font-size:11px;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);padding:4px 10px;border-radius:20px;font-weight:600}
+
+    .segments{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .segment{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-xs);transition:.25s cubic-bezier(.2,.8,.2,1);cursor:pointer}
+    .segment::after{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-soft) 70%,transparent);transform:scaleX(0);transform-origin:left;transition:.32s ease}
+    .segment:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--line-strong)}
+    .segment:hover::after{transform:scaleX(1)}
+    .seg-top{display:flex;justify-content:space-between;gap:12px}
+    .seg-icon{width:44px;height:44px;border-radius:12px;background:var(--surface-2);display:grid;place-items:center;font-size:20px;box-shadow:inset 0 0 0 1px rgba(20,20,15,.05)}
+    .segment:nth-child(3n+1) .seg-icon{background:linear-gradient(155deg,#eef1ff,#dfe3fb);}
+    .segment:nth-child(3n+2) .seg-icon{background:linear-gradient(155deg,#fbf0da,#f3ddb0);}
+    .segment:nth-child(3n+3) .seg-icon{background:linear-gradient(155deg,#e9f7ef,#d3ecdc);}
+    .dots{color:var(--muted);border:0;background:transparent;font-size:18px;line-height:1;border-radius:8px;width:28px;height:28px;transition:.15s}
+    .dots:hover{background:var(--surface-2);color:var(--text)}
+    .segment h3{font-family:var(--serif);font-weight:650;font-size:19px;line-height:1.2;margin:14px 0 4px;letter-spacing:-.3px;color:var(--text)}
+    .segment .meta{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gold)}
+    .segment p{font-size:13px;line-height:1.65;color:var(--text-soft);min-height:62px;margin:14px 0}
+    .label{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);font-weight:700}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+    .chip{font-size:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:5px 8px;color:var(--text-soft);font-weight:600}
+    .seg-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+    .people{display:flex}.person{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--surface);background:linear-gradient(155deg,var(--ink-2),var(--ink));color:#fff;font-size:9px;display:grid;place-items:center;margin-left:-6px}.person:first-child{margin-left:0}.person.light{background:var(--surface-2);color:var(--muted)}
+    .explore{font-size:11.5px;font-weight:700;color:var(--gold);transition:.15s}
+    .segment:hover .explore{transform:translateX(2px)}
+
+    .add-card{border:1.5px dashed var(--line-strong);background:linear-gradient(180deg,rgba(163,129,47,.035),transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:248px}
+    .add-card:hover{border-color:var(--gold-soft);background:var(--gold-tint)}
+    .add-circle{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:20px;margin:0 auto 10px;color:var(--text-soft);box-shadow:var(--shadow-xs)}
+    .add-card strong{display:block;font-family:var(--serif);font-weight:650;font-size:16px;color:var(--text)}.add-card span{display:block;color:var(--muted);font-size:11.5px;margin-top:6px;max-width:190px}
+
+    .journal-section{margin-top:42px}.journal-list{display:grid;gap:10px}
+    .entry{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px 18px;display:flex;gap:12px;align-items:flex-start;transition:.18s}
+    .entry::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--gold),var(--gold-soft));opacity:0;transition:.18s}
+    .entry:hover{border-color:var(--line-strong);box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+    .entry:hover::before{opacity:1}
+    .entry-main{flex:1;min-width:0}.entry-question{font-weight:700;font-size:14.5px;margin:0 0 6px;color:var(--text)}
+    .entry-meta{font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.2px}
+    .entry-answer{font-size:12.5px;line-height:1.6;color:var(--text-soft);margin:8px 0 0;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .entry-tag{font-size:10px;font-weight:700;background:var(--gold-tint);border:1px solid var(--gold-tint-strong);color:var(--gold);border-radius:20px;padding:6px 10px;white-space:nowrap}
+    .empty{padding:34px;text-align:center;color:var(--muted);font-size:13px;background:var(--surface);border:1.5px dashed var(--line);border-radius:var(--radius)}
+
+    .data-card{margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow-xs);gap:14px}
+    .data-copy{display:flex;gap:12px;align-items:center}
+    .data-icon{width:40px;height:40px;border-radius:11px;background:var(--surface-2);display:grid;place-items:center;color:var(--gold)}
+    .data-copy strong{display:block;font-size:12.5px;color:var(--text)}.data-copy span{display:block;color:var(--muted);font-size:10.5px;margin-top:3px}
+    .data-actions{display:flex;gap:8px;flex:none}
+    .danger-btn{color:var(--danger);border-color:var(--line)}
+    .danger-btn:hover{background:rgba(179,38,30,.07);border-color:rgba(179,38,30,.35);color:var(--danger)}
+
+    .footer{text-align:center;padding:44px 20px 20px;color:var(--text-soft);border-top:1px solid var(--line);margin-top:36px}
+    .footer .made{font-size:11.5px;margin-bottom:9px;font-weight:600;color:var(--muted)}
+    .footer .links{font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+    .footer a{text-decoration:none;color:var(--text-soft);display:inline-flex;align-items:center;gap:5px;font-weight:600;transition:.15s}
+    .footer a:hover{color:var(--gold)}
+    .footer .dot-sep{color:var(--line-strong)}
+
+    .bottom-nav{display:none}
+
+    .modal{position:fixed;inset:0;background:rgba(15,14,9,.42);backdrop-filter:blur(5px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+    .modal.open{display:flex}
+    .dialog{width:min(680px,100%);max-height:90vh;overflow:auto;background:var(--surface);border-radius:var(--radius-xl);border:1px solid var(--line);box-shadow:var(--shadow-lg);padding:24px}
+    .dialog-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+    .dialog h2{font-family:var(--serif);font-weight:650;font-size:21px;letter-spacing:-.4px;margin:0;color:var(--text)}
+    .dialog-sub{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5}
+    .close{border:1px solid var(--line);background:var(--surface-2);border-radius:9px;width:32px;height:32px;color:var(--text-soft);transition:.18s}
+    .close:hover{background:var(--surface-hover);transform:rotate(90deg)}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .field{margin-bottom:14px}.field.full{grid-column:1/-1}
+    .field label{display:block;font-size:10.5px;font-weight:700;margin-bottom:7px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+    .field input,.field textarea,.field select{width:100%;border:1.5px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);padding:11px 12px;outline:none;font-size:13.5px;transition:.16s;color:var(--text)}
+    .field textarea{min-height:100px;resize:vertical}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold-soft);background:var(--surface);box-shadow:var(--ring)}
+    .dialog-actions{display:flex;justify-content:flex-end;gap:9px;border-top:1px solid var(--line);padding-top:16px;margin-top:4px}
+
+    .detail-title{font-family:var(--serif);font-weight:650;font-size:25px;line-height:1.25;margin:0 0 9px;letter-spacing:-.4px;color:var(--text)}
+    .detail-meta{font-size:11.5px;color:var(--muted);margin-bottom:20px;font-weight:600}
+    .detail-block{margin:18px 0}
+    .detail-block h4{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;margin:0 0 8px;color:var(--gold);font-weight:700}
+    .detail-block p{font-size:13.5px;line-height:1.75;margin:0;color:var(--text-soft);white-space:pre-wrap}
+    .detail-models{display:flex;flex-wrap:wrap;gap:6px}
+
+    .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(15px);background:linear-gradient(155deg,var(--ink-2),var(--ink));color:#fff;padding:12px 18px;border-radius:11px;font-size:12.5px;font-weight:600;opacity:0;pointer-events:none;transition:.22s ease;z-index:200;box-shadow:var(--shadow-lg);border:1px solid rgba(255,255,255,.06)}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* ---- Mobile is the primary target: base rules above are tuned for phones (single column, big tap targets); the block below widens things back up for tablet/desktop. ---- */
+    @media(min-width:801px){
+      .segments{grid-template-columns:repeat(3,1fr)}
+    }
+    @media(min-width:561px) and (max-width:800px){
+      .segments{grid-template-columns:1fr 1fr}.layout{padding:34px 18px 100px}.topbar{padding:0 16px}
+    }
+    @media(max-width:800px){.layout{padding:34px 18px 100px}.topbar{padding:0 16px}}
+
+    @media(max-width:560px){
+      .topbar{height:58px;padding:0 14px}.brand{font-size:13px}.layout{padding:24px 14px 100px}
+      h1{font-size:29px}.hero{margin-bottom:20px;gap:16px}.count-box{display:none}
+      .top-actions{gap:6px}
+      .install-btn{padding:0;width:38px;justify-content:center}
+      .install-btn .btn-label{display:none}
+      .sync-card{padding:12px}.sync-copy p{max-width:150px}
+      .segments{grid-template-columns:1fr}.segment p{min-height:auto}
+      .form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+      .dots{width:34px;height:34px}
+      .filter{padding:9px 15px;font-size:12px}
+      /* iOS Safari zooms the page in when a focused input's font-size is under 16px — keep all inputs at 16px on phones */
+      .field input,.field textarea,.field select,.search input{font-size:16px}
+      /* Bottom-sheet modals: easier to reach and dismiss one-handed than a centered dialog on a phone */
+      .modal{align-items:flex-end;padding:0}
+      .dialog{width:100%;max-width:100%;border-radius:20px 20px 0 0;max-height:92vh;padding:18px 16px calc(16px + env(safe-area-inset-bottom))}
+      .dialog::before{content:"";display:block;width:36px;height:4px;border-radius:3px;background:var(--line-strong);margin:0 auto 14px}
+
+      .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:66px;background:rgba(247,245,239,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);z-index:50;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -14px 30px -24px rgba(20,20,15,.5)}
+      .nav-item{border:0;background:transparent;font-size:9.5px;font-weight:650;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);min-width:55px;min-height:44px;transition:.15s}
+      .nav-item:hover,.nav-item:active{color:var(--text)}
+      .nav-item.add{width:48px;height:48px;align-self:center;background:linear-gradient(155deg,var(--ink-2),var(--ink));color:var(--gold-soft);border-radius:14px;box-shadow:0 10px 22px -8px rgba(20,20,15,.5)}
+      .data-card{margin-bottom:6px;flex-wrap:wrap;gap:10px}.entry{padding:13px}.entry-answer{-webkit-line-clamp:1;line-clamp:1}
+      .layout{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">?</div>
+      <div>The Why App<small>Private Journal</small></div>
+    </div>
+    <div class="top-actions">
+      <button class="ghost-btn install-btn" id="installBtn" aria-label="Install app">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 19h14"/></svg>
+        <span class="btn-label">Install</span>
+      </button>
+      <button class="icon-btn" id="focusSearch" aria-label="Search">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      </button>
+      <div class="avatar">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.4-3.6 4.2-5.5 7-5.5s5.6 1.9 7 5.5"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Curiosity, archived</div>
+        <h1>Segments &amp; <em>Mental<br>Models</em></h1>
+        <p>A curated mental lattice organizing your deep-dive inquiry threads and underlying reasoning frameworks.</p>
+      </div>
+      <div class="count-box"><strong id="domainCount">3</strong><span>Domains</span></div>
+    </section>
+
+    <div class="sync-card">
+      <div class="sync-left">
+        <div class="cloud">
+          <svg class="ic" style="width:19px;height:19px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.6-8.96A5.5 5.5 0 0 1 17.3 8.05 4 4 0 0 1 17 18H7z"/></svg>
+        </div>
+        <div class="sync-copy">
+          <strong><span class="status-dot"></span>Offline PWA Active</strong>
+          <p id="syncText">0 inquiries stored locally • Ready for sync</p>
+        </div>
+      </div>
+      <button class="sync-btn" id="syncBtn">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.36"/><path d="M21 4v5h-5"/></svg>
+        Sync
+      </button>
+    </div>
+
+    <div class="search-row">
+      <div class="search">
+        <span>
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </span>
+        <input id="searchInput" type="search" placeholder="Filter models, topics, or biases (e.g. Veblen)" />
+      </div>
+    </div>
+    <div class="filters" id="filters"></div>
+
+    <div class="section-head">
+      <h2>My Segments</h2>
+      <span id="segmentHint">Click a segment to filter your journal</span>
+    </div>
+    <div class="segments" id="segments"></div>
+
+    <section class="journal-section">
+      <div class="section-head">
+        <h2>Question Journal</h2>
+        <span id="entryCount">0 inquiries</span>
+      </div>
+      <div class="journal-list" id="journalList"></div>
+    </section>
+
+    <div class="data-card">
+      <div class="data-copy">
+        <div class="data-icon">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M5 19h14"/></svg>
+        </div>
+        <div><strong>Data &amp; Export</strong><span>JSON, Markdown bundles, or local backup</span></div>
+      </div>
+      <div class="data-actions">
+        <button class="ghost-btn" id="exportBtn" style="height:36px;font-size:11.5px">Export All</button>
+        <button class="ghost-btn danger-btn" id="resetBtn" style="height:36px;font-size:11.5px">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          Reset App
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="made">Crafted by Sanidhya</div>
+    <div class="links">
+      <a href="mailto:iamsanidhya.720@gmail.com">
+        <svg class="ic" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        iamsanidhya.720@gmail.com
+      </a>
+      <span class="dot-sep">•</span>
+      <a href="https://www.instagram.com/notbtguy" target="_blank" rel="noopener">
+        <svg class="ic" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg>
+        @notbtguy
+      </a>
+    </div>
+  </footer>
+
+  <nav class="bottom-nav">
+    <button class="nav-item" data-nav="journal">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v9h14v-9"/></svg>
+      Journal
+    </button>
+    <button class="nav-item" data-nav="segments">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+      Segments
+    </button>
+    <button class="nav-item add" id="mobileAdd" aria-label="Add">
+      <svg class="ic" style="width:20px;height:20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+    </button>
+    <button class="nav-item" data-nav="models">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2"/><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)"/></svg>
+      Models
+    </button>
+    <button class="nav-item" data-nav="archive">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="4.5" rx="1"/><path d="M4.5 9v9.5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5V9"/><path d="M10 13h4"/></svg>
+      Archive
+    </button>
+  </nav>
+</div>
+
+<div class="modal" id="entryModal">
+  <div class="dialog">
+    <div class="dialog-head">
+      <div><h2>Capture a Why</h2><div class="dialog-sub">Turn the question in your head into a permanent learning record.</div></div>
+      <button class="close" data-close="entryModal">×</button>
+    </div>
+    <form id="entryForm">
+      <div class="field full"><label>Question</label><input id="qQuestion" required placeholder="Why do people...?" /></div>
+      <div class="form-grid">
+        <div class="field"><label>Segment</label><select id="qSegment"></select></div>
+        <div class="field"><label>Mental models / keywords</label><input id="qModels" placeholder="Veblen Effect, Status Signaling" /></div>
+      </div>
+      <div class="field"><label>Explanation</label><textarea id="qAnswer" placeholder="Write the explanation, evidence, examples, competing views, or your own reasoning..."></textarea></div>
+      <div class="field"><label>My takeaway</label><textarea id="qTakeaway" style="min-height:70px" placeholder="What did this change in the way I see the world?"></textarea></div>
+      <div class="dialog-actions"><button type="button" class="ghost-btn" data-close="entryModal">Cancel</button><button class="primary-btn">Save Why</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="segmentModal">
+  <div class="dialog">
+    <div class="dialog-head">
+      <div><h2>New Segment</h2><div class="dialog-sub">Create your own lens for understanding the world.</div></div>
+      <button class="close" data-close="segmentModal">×</button>
+    </div>
+    <form id="segmentForm">
+      <div class="form-grid">
+        <div class="field"><label>Segment name</label><input id="sName" required placeholder="e.g. Religion & Society" /></div>
+        <div class="field"><label>Icon</label><input id="sIcon" maxlength="2" placeholder="◉" /></div>
+        <div class="field full"><label>Description</label><textarea id="sDesc" required style="min-height:80px" placeholder="What kind of questions belong here?"></textarea></div>
+      </div>
+      <div class="dialog-actions"><button type="button" class="ghost-btn" data-close="segmentModal">Cancel</button><button class="primary-btn">Create Segment</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="detailModal">
+  <div class="dialog">
+    <div class="dialog-head"><div><div class="dialog-sub" id="detailSegment"></div></div><button class="close" data-close="detailModal">×</button></div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const KEY = "theWhyApp.v1";
+  const defaultSegments = [
+    {id:"consumer",name:"Consumer Psychology",icon:"🛒",description:"Decision making, cognitive biases, status signaling, and underlying mechanics of irrational purchasing.",models:["Loss Aversion","Veblen Effect","Anchoring"]},
+    {id:"philosophy",name:"Philosophy & Consciousness",icon:"🏛️",description:"Free will, meta-ethics, existential dread, and epistemological roots of knowledge verification.",models:["Determinism","First Principles","Occam's Razor"]},
+    {id:"sociology",name:"Sociology & Human Culture",icon:"🧬",description:"Kinship networks, long-arc religious traditions, societal conventions, and implicit tribal norms.",models:["In-group / Out-group","Cultural Evolution"]}
+  ];
+  const demoEntries = [
+    {id:cryptoRandom(),question:"Why do people buy things they know they don't need?",segment:"consumer",models:["Veblen Effect","Status Signaling"],answer:"Consumption is not only about utility. People also buy for identity, social status, emotional regulation, belonging, novelty and perceived future value. A product can therefore function as a signal to other people and to the buyer themselves.",takeaway:"Buying is often a social and psychological behavior disguised as a rational transaction.",date:"2026-09-10"},
+    {id:cryptoRandom(),question:"Why are cousin marriages permitted in some societies and religions?",segment:"sociology",models:["Kinship","Cultural Evolution"],answer:"Marriage rules are shaped by a mix of religion, history, kinship structure, inheritance, geography and social incentives. In some communities, cousin marriage historically strengthened family alliances and kept property or trust networks within extended kin groups. Rules vary considerably across cultures and legal systems.",takeaway:"What feels 'normal' or 'strange' about marriage is strongly influenced by social structure and historical incentives.",date:"2026-09-09"}
+  ];
+
+  let state = load();
+  let activeFilter = "All Disciplines";
+  let deferredPrompt = null;
+
+  function cryptoRandom(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
+  function load(){
+    try {
+      const raw = localStorage.getItem(KEY);
+      if(raw) return JSON.parse(raw);
+    } catch(e){}
+    const initial = {segments:defaultSegments,entries:demoEntries};
+    localStorage.setItem(KEY,JSON.stringify(initial));
+    return initial;
+  }
+  function save(){localStorage.setItem(KEY,JSON.stringify(state)); render();}
+  function esc(v){return String(v ?? "").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+  function showToast(text){const t=document.getElementById("toast");t.textContent=text;t.classList.add("show");clearTimeout(showToast.t);showToast.t=setTimeout(()=>t.classList.remove("show"),1900)}
+  function openModal(id){document.getElementById(id).classList.add("open")}
+  function closeModal(id){document.getElementById(id).classList.remove("open")}
+
+  function render(){
+    document.getElementById("domainCount").textContent=state.segments.length;
+    document.getElementById("syncText").textContent=`${state.entries.length} inquiries stored locally • Ready for sync`;
+    renderFilters(); renderSegments(); renderJournal(); populateSegmentSelect();
+  }
+  function renderFilters(){
+    const filters = document.getElementById("filters");
+    const all = ["All Disciplines",...state.segments.map(s=>s.name)];
+    filters.innerHTML = all.map(x=>`<button class="filter ${x===activeFilter?"active":""}" data-filter="${esc(x)}">${esc(x)}</button>`).join("");
+    filters.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{activeFilter=b.dataset.filter;render()});
+  }
+  function renderSegments(){
+    const q=(document.getElementById("searchInput").value||"").toLowerCase().trim();
+    const filtered=state.segments.filter(s=>{
+      const matchesFilter=activeFilter==="All Disciplines"||s.name===activeFilter;
+      const matchesSearch=!q||s.name.toLowerCase().includes(q)||s.description.toLowerCase().includes(q)||s.models.join(" ").toLowerCase().includes(q);
+      return matchesFilter&&matchesSearch;
+    });
+    const cardsHtml=filtered.map(s=>{
+      const count=state.entries.filter(e=>e.segment===s.id).length;
+      return `<article class="segment" data-seg="${esc(s.id)}">
+        <div class="seg-top"><div class="seg-icon">${esc(s.icon)}</div><button class="dots" data-menu="${esc(s.id)}">•••</button></div>
+        <h3>${esc(s.name)}</h3><div class="meta">${count} quer${count===1?"y":"ies"} logged</div>
+        <p>${esc(s.description)}</p>
+        <div class="label">Key mental models</div>
+        <div class="chips">${s.models.map(m=>`<span class="chip">⌁ ${esc(m)}</span>`).join("")}</div>
+        <div class="seg-bottom"><div class="people"><span class="person">#1</span><span class="person light">#2</span><span class="person light">+${Math.max(count-2,0)}</span></div><span class="explore">Explore Segment →</span></div>
+      </article>`
+    }).join("");
+    const addTileHtml=`<button type="button" class="segment add-card" id="addSegmentBtn">
+        <div class="add-circle">+</div>
+        <strong>Add New</strong>
+        <span>Define your own discipline or mental model group</span>
+      </button>`;
+    document.getElementById("segments").innerHTML=(cardsHtml||`<div class="empty" style="grid-column:1/-1">No segments match your search.</div>`)+addTileHtml;
+    document.getElementById("addSegmentBtn").onclick=()=>openModal("segmentModal");
+    document.querySelectorAll(".segment[data-seg]").forEach(card=>card.addEventListener("click",e=>{
+      if(e.target.closest("[data-menu]")) return;
+      const seg=state.segments.find(s=>s.id===card.dataset.seg); if(!seg)return;
+      activeFilter=seg.name; document.getElementById("segmentHint").textContent=`Showing ${seg.name}`;
+      render();
+      document.getElementById("journalList").scrollIntoView({behavior:"smooth",block:"start"});
+    }));
+    document.querySelectorAll("[data-menu]").forEach(btn=>btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.dataset.menu, seg=state.segments.find(s=>s.id===id);
+      if(!seg)return;
+      if(confirm(`Delete "${seg.name}"? Questions inside it will also be moved to Archive.`)){
+        state.entries=state.entries.map(x=>x.segment===id?({...x,archived:true}):x);
+        state.segments=state.segments.filter(x=>x.id!==id);
+        if(activeFilter===seg.name) activeFilter="All Disciplines";
+        save(); showToast("Segment archived");
+      }
+    }));
+  }
+  function renderJournal(){
+    const q=(document.getElementById("searchInput").value||"").toLowerCase().trim();
+    let list=state.entries.filter(e=>!e.archived).filter(e=>{
+      const seg=state.segments.find(s=>s.id===e.segment);
+      const hay=[e.question,e.answer,e.takeaway,...e.models,seg?.name||""].join(" ").toLowerCase();
+      const filterOk=activeFilter==="All Disciplines"||seg?.name===activeFilter;
+      return filterOk && (!q||hay.includes(q));
+    }).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+    document.getElementById("entryCount").textContent=`${list.length} ${list.length===1?"inquiry":"inquiries"}`;
+    const el=document.getElementById("journalList");
+    el.innerHTML=list.map(e=>{
+      const seg=state.segments.find(s=>s.id===e.segment);
+      return `<article class="entry" data-entry="${esc(e.id)}">
+        <div class="entry-main"><p class="entry-question">${esc(e.question)}</p><div class="entry-meta">${esc(e.date)} • ${esc(seg?.name||"Unsorted")}</div><div class="entry-answer">${esc(e.answer||"No explanation added yet.")}</div></div>
+        <span class="entry-tag">${esc(e.models?.[0]||"Why")}</span>
+      </article>`
+    }).join("") || `<div class="empty">No questions here yet. Capture the next “why” that crosses your mind.</div>`;
+    el.querySelectorAll(".entry").forEach(x=>x.onclick=()=>openDetail(x.dataset.entry));
+  }
+  function openDetail(id){
+    const e=state.entries.find(x=>x.id===id); if(!e)return;
+    const s=state.segments.find(x=>x.id===e.segment);
+    document.getElementById("detailSegment").textContent=`${s?.icon||"?"} ${s?.name||"Unsorted"} • ${e.date}`;
+    document.getElementById("detailContent").innerHTML=`
+      <h2 class="detail-title">${esc(e.question)}</h2>
+      <div class="detail-block"><h4>Explanation</h4><p>${esc(e.answer||"No explanation written yet.")}</p></div>
+      <div class="detail-block"><h4>Mental models & keywords</h4><div class="detail-models">${(e.models||[]).map(m=>`<span class="chip">${esc(m)}</span>`).join("")||'<span class="chip">None yet</span>'}</div></div>
+      <div class="detail-block"><h4>My takeaway</h4><p>${esc(e.takeaway||"No takeaway added yet.")}</p></div>
+      <div class="dialog-actions"><button class="ghost-btn" id="archiveEntry">Archive</button><button class="primary-btn" id="editEntry">Edit</button></div>`;
+    document.getElementById("archiveEntry").onclick=()=>{e.archived=true;save();closeModal("detailModal");showToast("Question archived")};
+    document.getElementById("editEntry").onclick=()=>{closeModal("detailModal");fillEntryForm(e);openModal("entryModal")};
+    openModal("detailModal");
+  }
+  function populateSegmentSelect(selected){
+    document.getElementById("qSegment").innerHTML=state.segments.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("");
+    if(selected)document.getElementById("qSegment").value=selected;
+  }
+  function fillEntryForm(e){
+    document.getElementById("entryForm").dataset.editId=e.id;
+    document.getElementById("qQuestion").value=e.question;
+    document.getElementById("qModels").value=(e.models||[]).join(", ");
+    document.getElementById("qAnswer").value=e.answer||"";
+    document.getElementById("qTakeaway").value=e.takeaway||"";
+    populateSegmentSelect(e.segment);
+  }
+  function resetEntryForm(){
+    const f=document.getElementById("entryForm"); f.reset(); delete f.dataset.editId;
+    populateSegmentSelect(state.segments[0]?.id);
+  }
+
+  document.getElementById("searchInput").addEventListener("input",render);
+  document.getElementById("focusSearch").onclick=()=>{document.getElementById("searchInput").focus();window.scrollTo({top:130,behavior:"smooth"})};
+  document.getElementById("syncBtn").onclick=()=>showToast("Everything is already stored offline");
+  document.getElementById("mobileAdd").onclick=()=>{resetEntryForm();openModal("entryModal")};
+  document.getElementById("resetBtn").onclick=()=>{
+    const sure=confirm("Reset The Why App?\n\nThis permanently deletes every segment and journal entry stored on this device and cannot be undone.");
+    if(!sure) return;
+    state={segments:defaultSegments,entries:[]};
+    activeFilter="All Disciplines";
+    document.getElementById("searchInput").value="";
+    document.getElementById("segmentHint").textContent="Click a segment to filter your journal";
+    save();
+    resetEntryForm();
+    showToast("Fresh start — your journal has been reset");
+  };
+  document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>{
+    const target=b.dataset.nav;
+    if(target==="journal")document.querySelector(".journal-section").scrollIntoView({behavior:"smooth"});
+    if(target==="segments")window.scrollTo({top:0,behavior:"smooth"});
+    if(target==="models"){activeFilter="All Disciplines";render();showToast("Mental models are shown within each segment")}
+    if(target==="archive")showToast("Archived questions are available from Export All");
+  });
+
+  document.getElementById("entryForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const f=e.currentTarget;
+    const item={
+      id:f.dataset.editId||cryptoRandom(),
+      question:document.getElementById("qQuestion").value.trim(),
+      segment:document.getElementById("qSegment").value,
+      models:document.getElementById("qModels").value.split(",").map(x=>x.trim()).filter(Boolean),
+      answer:document.getElementById("qAnswer").value.trim(),
+      takeaway:document.getElementById("qTakeaway").value.trim(),
+      date:new Date().toISOString().slice(0,10),
+      archived:false
+    };
+    const existing=state.entries.findIndex(x=>x.id===item.id);
+    if(existing>=0)state.entries[existing]=item; else state.entries.push(item);
+    save(); closeModal("entryModal"); resetEntryForm(); showToast(existing>=0?"Why updated":"Why saved locally");
+  });
+
+  document.getElementById("segmentForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const name=document.getElementById("sName").value.trim();
+    state.segments.push({id:cryptoRandom(),name,icon:document.getElementById("sIcon").value.trim()||"◉",description:document.getElementById("sDesc").value.trim(),models:[]});
+    save();closeModal("segmentModal");e.currentTarget.reset();showToast("New segment created");
+  });
+
+  document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
+  document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("open")}));
+
+  document.getElementById("exportBtn").onclick=()=>{
+    const payload={app:"The Why App",exportedAt:new Date().toISOString(),...state};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`the-why-app-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);
+    showToast("Backup exported");
+  };
+
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;document.getElementById("installBtn").style.display="inline-flex"});
+  document.getElementById("installBtn").onclick=async()=>{
+    if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}
+    else showToast("Use your browser menu → Install The Why App");
+  };
+  if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+
+  resetEntryForm();
+  render();
+})();
+</script>
+</body>
+</html>
